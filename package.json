@@ -13,6 +13,7 @@
     "@tanstack/react-query": "4",
     "axios": "^1.7.7",
     "daisyui": "^4.12.13",
+    "date-fns": "^4.1.0",
     "formik": "^2.4.6",
     "i": "^0.3.7",
     "next": "14.2.15",

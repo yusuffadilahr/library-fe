@@ -1,8 +1,53 @@
+'use client'
+
 import { FaSearch } from "react-icons/fa";
 import AdminLayout from "../page";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { format } from "date-fns";
+import Link from "next/link";
 
+interface IBook {
+    address: string
+    author: string
+    books_id: number
+    description: string
+    due_date: string
+    email: string
+    first_name: string
+    id: number
+    id_card_number: string
+    last_name: string
+    members_id: string
+    penalty_charge: number
+    phone_number: string
+    publish_year: string
+    return_date: string
+    staff_id: number
+    title: string
+}
 
 export default function Lending() {
+    const [dataMemberTransaction, setMemberTransaction] = useState<IBook[]>([])
+    const { mutate: getData } = useMutation({
+        mutationFn: async () => {
+            const res = await axios.get('http://localhost:5000/transaction')
+            return res
+        },
+        onSuccess: (res) => {
+            console.log(res)
+            setMemberTransaction(res.data.data)
+        },
+        onError: (err) => {
+            console.log(err)
+        }
+    })
+
+    useEffect(() => {
+        getData()
+    }, [])
+
     return (
         <AdminLayout>
             <main className=" h-[85%] w-[80%] flex absolute right-0 bottom-0  p-10 flex-col gap-5 ">
@@ -14,8 +59,8 @@ export default function Lending() {
                             <FaSearch />
                         </div>
                     </div>
-                    <div className=" w-[30%]">
-                        <button className=" w-full h-full rounded-xl  bg-blue-400 text-white">New Lending</button>
+                    <div className=" w-[30%] flex justify-center items-center">
+                        <Link href={'/admin/new-landing'} className="hover:bg-blue-300 w-full h-full rounded-xl  bg-blue-400 text-white flex justify-center items-center font-semibold">New Lending</Link>
                     </div>
 
                 </section>
@@ -32,18 +77,14 @@ export default function Lending() {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className="hover:bg-gray-50 ">
-                                    <td className="py-3 px-4 border-b">1</td>
-                                    <td className="py-3 px-4 border-b">John Doe</td>
-                                    <td className="py-3 px-4 border-b">john@example.com</td>
-                                    <td className="py-3 px-4 border-b"><button className="text-blue-500">Edit</button></td>
-                                </tr>
-                                <tr className="hover:bg-gray-50">
-                                    <td className="py-3 px-4 border-b">2</td>
-                                    <td className="py-3 px-4 border-b">Jane Smith</td>
-                                    <td className="py-3 px-4 border-b">jane@example.com</td>
-                                    <td className="py-3 px-4 border-b"><button className="text-blue-500">Edit</button></td>
-                                </tr>
+                                {dataMemberTransaction.map((item, i) => (
+                                    <tr className="hover:bg-gray-50 " key={i}>
+                                        <td className="py-3 px-4 border-b">{format(item.due_date, 'yyyy-MM-dd')}</td>
+                                        <td className="py-3 px-4 border-b">{format(item.return_date, 'yyyy-MM-dd')}</td>
+                                        <td className="py-3 px-4 border-b">{item.first_name}</td>
+                                        <td className="py-3 px-4 border-b"><button className="text-blue-500">Edit</button></td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

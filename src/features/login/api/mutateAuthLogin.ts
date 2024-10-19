@@ -19,7 +19,9 @@ export const mutateAuthLogin = () => {
         onSuccess: (res) => {
             const dataLocation = res.data.data[0].location
             const first_name = res.data.data[0].firstname
+            const id_users = res.data.data[0].id
             dispatch(setBranchName(res.data.data[0]))
+            localStorage.setItem('id_users', id_users)
             localStorage.setItem("branch", dataLocation)
             localStorage.setItem("user_admin", first_name)
 

@@ -4,30 +4,33 @@ import AdminLayout from "../page";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
+import { IMember } from "@/features/member/types";
+import Link from "next/link";
 
 export default function Member() {
-    const [dataMember, setDataMember] = useState([])
+    const [entriesPerPage, setEntriesPerPage] = useState<number>(6)
+    const [currentPage, setCurrentPage] = useState<number>(1)
+    const [dataMember, setDataMember] = useState<IMember[]>([])
+
     const { mutate: getMembers } = useMutation({
         mutationFn: async () => {
             const response = await axios.get('http://localhost:5000/member')
             return response
         },
         onSuccess: (res) => {
+            console.log(res.data.data)
             setDataMember(res.data.data)
         },
-        onError: (err)=> {
+        onError: (err) => {
             console.log(err)
         }
     })
 
+    const paginatedData = dataMember.slice((currentPage - 1) * entriesPerPage, entriesPerPage - currentPage)
+
     useEffect(() => {
         getMembers()
     }, [])
-
-    // interface IMember {
-
-    // }
 
     return (
         <AdminLayout>
@@ -40,8 +43,8 @@ export default function Member() {
                             <FaSearch />
                         </div>
                     </div>
-                    <div className=" w-[30%]">
-                        <button className=" w-full h-full rounded-xl  bg-blue-400 text-white">Create Member</button>
+                    <div className=" w-[50%] flex justify-center items-center">
+                        <Link href={'/admin/create-member'} className=" w-full flex justify-center items-center h-full rounded-xl  bg-blue-400 hover:bg-blue-300 font-semibold text-white">Create Member</Link>
                     </div>
 
                 </section>
@@ -58,12 +61,12 @@ export default function Member() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {dataMember.map((item: any, i: any) => (
+                                {paginatedData.map((item, i) => (
                                     <tr className="hover:bg-gray-50 " key={i}>
                                         <td className="py-3 px-4 border-b">{item.id}</td>
                                         <td className="py-3 px-4 border-b">{item.first_name} {item.last_name}</td>
                                         <td className="py-3 px-4 border-b">{item.email}</td>
-                                        <td className="py-3 px-4 border-b"><button className="text-blue-500">Edit</button></td>
+                                        <td className="py-3 px-4 border-b"><button className="text-blue-500">View</button></td>
                                     </tr>
                                 ))}
                             </tbody>
