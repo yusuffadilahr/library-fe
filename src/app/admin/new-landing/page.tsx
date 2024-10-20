@@ -4,6 +4,7 @@ import AdminLayout from "../page";
 import axios from "axios";
 import { IBooks, IMember } from "@/features/new-lending/types";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 
 export default function Page() {
@@ -14,6 +15,7 @@ export default function Page() {
     const [dataBooks, setDataBooks] = useState<IBooks[]>([])
     const [booksData, setBooksData] = useState<IBooks[]>([])
     const [idBooks, setIdBooks] = useState<number | null>(null)
+    // const [idMember, setIdMember] = useState<number | null>(null)
 
     const searchDataMember = async (values: string) => {
 
@@ -55,13 +57,51 @@ export default function Page() {
         }
     }
 
-    const handleInputValueBooks = (title: string, item: IBooks, id:number) => {
+    const handleInputValueBooks = (title: string, item: IBooks, id: number) => {
         setInputTitleValue(title)
         setBooksData([item])
         setDataBooks([])
         setIdBooks(id)
     }
 
+    const dataStaff = localStorage.getItem('id_users')
+    console.log(typeof Number(dataStaff), '<--data staff')
+
+    const onNewLending = async () => {
+        try {
+            // const data = {
+            //     members_id: inputValue,
+            //     books_id: Number(idBooks),
+            //     staff_id: Number(dataStaff)
+            // }
+
+            const request = await axios.post('http://localhost:5000/transaction/new-data-lending', {
+                members_id: inputValue,
+                books_id: Number(idBooks),
+                staff_id: Number(dataStaff)
+            })
+
+
+            if (request.data.error == false) {
+                toast.success('Berhasil menambahkan data', {
+                    position: 'top-center'
+                })
+            }
+
+            console.log(request, '<-- request')
+            return request
+        } catch (error: any) {
+            if (error.response.status == 409 || error.response.status == 404 || error.response.status == 400) {
+                toast.error(error.response.data.message, {
+                    position: 'top-center'
+                })
+            }
+            console.log(error.response.status, '<-- cek response')
+            console.log(error)
+        }
+    }
+
+    console.log(inputValue, '<-- input value')
     console.log(booksData)
     console.log(idBooks)
     return (
@@ -143,7 +183,7 @@ export default function Page() {
                                                 <td className="py-3 px-4 border-b">{item.author}</td>
                                                 <td className="py-3 px-4 border-b">
                                                     <Link href={`/admin/books/${item.id}`}>
-                                                    <button className="text-blue-500">View Book</button>
+                                                        <button className="text-blue-500">View Book</button>
                                                     </Link>
                                                 </td>
                                             </>
@@ -156,7 +196,7 @@ export default function Page() {
                     </div>
                 </section>
                 <section>
-                    <button className="bg-blue-500 hover:bg-blue-400 font-semibold w-full h-14 rounded-md text-white">Submit</button>
+                    <button onClick={onNewLending} className="bg-blue-500 hover:bg-blue-400 font-semibold w-full h-14 rounded-md text-white">Submit</button>
                 </section>
             </main>
         </AdminLayout >

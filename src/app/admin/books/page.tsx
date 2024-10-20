@@ -1,34 +1,34 @@
 'use client'
-import { FaSearch } from "react-icons/fa";
-import AdminLayout from "../page";
+import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
+import AdminLayout from "../page";
+import { FaSearch } from "react-icons/fa";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { IMember } from "@/features/member/types";
-import Link from "next/link";
 
-export default function Member() {
-    const [entriesPerPage, setEntriesPerPage] = useState<number>(5)
-    const [currentPage, setCurrentPage] = useState<number>(1)
-    const [dataMember, setDataMember] = useState<IMember[]>([])
+export default function Page() {
+    const [currentPage, setCurrentPage] = useState(1)
+    const [entriesPerPage, setEntriesPerPage] = useState(5)
+    const [booksData, setBooksData] = useState([])
 
-    const { mutate: getMembers } = useMutation({
+    const { mutate: getBookList } = useMutation({
         mutationFn: async () => {
-            const response = await axios.get('http://localhost:5000/member')
-            return response
+            const data = await axios.get('http://localhost:5000/books')
+            return data
         },
         onSuccess: (res) => {
-            console.log(res.data.data)
-            setDataMember(res.data.data)
-        },
-        onError: (err) => {
-            console.log(err)
+            setBooksData(res.data.data)
         }
     })
 
-    const totalPages = Math.ceil(dataMember.length / entriesPerPage)
-    const paginatedData = dataMember.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
-    const handlePageChange = (page:number) => {
+    const paginatedData: any[] = booksData.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+    const totalPages = Math.ceil(booksData.length / entriesPerPage)
+
+    useEffect(() => {
+        getBookList()
+    }, [])
+
+    const handlePageChange = (page: number) => {
         setCurrentPage(page)
     }
 
@@ -37,23 +37,19 @@ export default function Member() {
         setCurrentPage(1)
     }
 
-    useEffect(() => {
-        getMembers()
-    }, [])
-
     return (
         <AdminLayout>
-            <main className=" h-[85%] w-[80%] flex absolute right-0 bottom-0 px-10 flex-col gap-5 ">
-                <section className="text-xl font-bold">MEMBERS</section>
+            <main className="h-[85%] w-[80%] flex absolute right-0 bottom-0 px-10 flex-col gap-5">
+                <section className="text-xl font-bold">BOOK LIST</section>
                 <section className="flex h-12 gap-5">
                     <div className="relative w-[70%]">
-                        <input className="border border-gray-400 w-full h-full rounded-xl pl-2" type="text" placeholder="Search..." />
-                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <input className="border border-gray-400 w-full h-full rounded-xl pl-2" type="text" placeholder="Search..."/>
+                        <div className="absolute inset-y-0 right-0 pr-3  flex items-center  pointer-events-none">
                             <FaSearch />
                         </div>
                     </div>
                     <div className=" w-[30%] flex justify-center items-center">
-                        <Link href={'/admin/create-member'} className=" w-full flex justify-center items-center h-full rounded-xl  bg-blue-400 hover:bg-blue-300 font-semibold text-white">Create Member</Link>
+                        <Link href={'/admin/create-books-list'} className=" w-full flex justify-center items-center h-full rounded-xl  bg-blue-400 hover:bg-blue-300 font-semibold text-white">Add Book</Link>
                     </div>
                 </section>
                 <section className="flex">
@@ -70,9 +66,11 @@ export default function Member() {
                         <table className="min-w-full bg-white border border-gray-200 text-center">
                             <thead>
                                 <tr className="bg-gray-100 text-blue-500  uppercase text-sm ">
-                                    <th className="py-3 px-4 border-b">Member Id</th>
-                                    <th className="py-3 px-4 border-b">Name</th>
-                                    <th className="py-3 px-4 border-b">Email</th>
+                                    <th className="py-3 px-4 border-b">Book Id</th>
+                                    <th className="py-3 px-4 border-b">Title</th>
+                                    <th className="py-3 px-4 border-b">Description</th>
+                                    <th className="py-3 px-4 border-b">Author</th>
+                                    <th className="py-3 px-4 border-b">Publish Year</th>
                                     <th className="py-3 px-4 border-b">Action</th>
                                 </tr>
                             </thead>
@@ -80,8 +78,10 @@ export default function Member() {
                                 {paginatedData.map((item, i) => (
                                     <tr className="hover:bg-gray-50 " key={i}>
                                         <td className="py-3 px-4 border-b">{item.id}</td>
-                                        <td className="py-3 px-4 border-b">{item.first_name} {item.last_name}</td>
-                                        <td className="py-3 px-4 border-b">{item.email}</td>
+                                        <td className="py-3 px-4 border-b">{item.title}</td>
+                                        <td className="py-3 px-4 border-b">{item.description}</td>
+                                        <td className="py-3 px-4 border-b">{item.author}</td>
+                                        <td className="py-3 px-4 border-b">{item.publish_year}</td>
                                         <td className="py-3 px-4 border-b"><button className="text-blue-500">View</button></td>
                                     </tr>
                                 ))}
@@ -95,10 +95,10 @@ export default function Member() {
                     </div>
                     <div className="justify-end flex w-full gap-2">
                         <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage == 1} className="py-2 disabled:bg-gray-200 w-[20%] flex justify-center items-center h-full rounded-xl  bg-blue-400 hover:bg-blue-300 font-semibold text-white">Previous</button>
-                        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage == Math.ceil(dataMember.length / entriesPerPage)} className=" py-2 disabled:bg-gray-200 w-[20%] flex justify-center items-center h-full rounded-xl  bg-blue-400 hover:bg-blue-300 font-semibold text-white">Next</button>
+                        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage == Math.ceil(booksData.length / entriesPerPage)} className=" py-2 disabled:bg-gray-200 w-[20%] flex justify-center items-center h-full rounded-xl  bg-blue-400 hover:bg-blue-300 font-semibold text-white">Next</button>
                     </div>
                 </div>
             </main>
         </AdminLayout>
-    )
+    );
 }
