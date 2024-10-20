@@ -105,7 +105,7 @@ export default function Lending() {
                                         <td className="py-3 px-4 border-b">{format(item.due_date, 'yyyy-MM-dd')}</td>
                                         <td className="py-3 px-4 border-b">{format(item.return_date, 'yyyy-MM-dd')}</td>
                                         <td className="py-3 px-4 border-b">{item.first_name}</td>
-                                        <td className="py-3 px-4 border-b"><Link href={`/admin/lending/${item.member_trc_id}`} className="text-blue-500">View details transaction</Link></td>
+                                        <td className="py-3 px-4 border-b"><Link href={`/admin/lending/${item.member_trc_id}`} className="text-blue-500">View detail transaction</Link></td>
                                     </tr>
                                 ))}
                             </tbody>

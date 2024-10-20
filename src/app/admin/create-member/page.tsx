@@ -65,32 +65,32 @@ export default function CreateMember() {
                         <section className="columns-2 gap-10 h-fit">
                             <div>
                                 <div className="text-blue-500">First Name</div>
-                                <Field name="first_name" className="border border-gray-400 w-full rounded-md h-12" type="text" />
+                                <Field name="first_name" className="border px-3 border-gray-400 w-full rounded-md h-12" type="text" />
                                 <ErrorMessage name="first_name" component={'div'} className="text-red-500" />
                             </div>
                             <div className="my-10">
                                 <div className="text-blue-500">Last name</div>
-                                <Field name="last_name" className="border border-gray-400 w-full rounded-md h-12" type="text" />
+                                <Field name="last_name" className="border border-gray-400 px-3 w-full rounded-md h-12" type="text" />
                                 <ErrorMessage name="last_name" component={'div'} className="text-red-500" />
                             </div>
                             <div>
                                 <div className="text-blue-500">Email</div>
-                                <Field name="email" className="border border-gray-400 w-full rounded-md h-12" type="text" />
+                                <Field name="email" className="border border-gray-400 px-3 w-full rounded-md h-12" type="text" />
                                 <ErrorMessage name="email" component={'div'} className="text-red-500" />
                             </div>
                             <div>
                                 <div className="text-blue-500">Phone Number</div>
-                                <Field name="phone_number" className="border border-gray-400 w-full rounded-md h-12" type="text" />
+                                <Field name="phone_number" className="border border-gray-400 px-3 w-full rounded-md h-12" type="text" />
                                 <ErrorMessage name="phone_number" component={'div'} className="text-red-500" />
                             </div>
                             <div className="my-10">
                                 <div className="text-blue-500">Address</div>
-                                <Field name="address" className="border border-gray-400 w-full rounded-md h-12" type="text" />
+                                <Field name="address" className="border border-gray-400 px-3 w-full rounded-md h-12" type="text" />
                                 <ErrorMessage name="address" component={'div'} className="text-red-500" />
                             </div>
                             <div>
                                 <div className="text-blue-500">ID Card (KTP)</div>
-                                <Field name="id_card_number" className="border border-gray-400 w-full rounded-md h-12" type="text" />
+                                <Field name="id_card_number" className="border border-gray-400 px-3 w-full rounded-md h-12" type="text" />
                                 <ErrorMessage name="id_card_number" component={'div'} className="text-red-500" />
                             </div>
                         </section>
