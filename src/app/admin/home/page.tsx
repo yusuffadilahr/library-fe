@@ -7,9 +7,12 @@ import AdminLayout from "../page";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import Link from "next/link";
 
 export default function Home() {
     const [dataMember, setDataMember] = useState([])
+    const [memberTransaction, setMemberTransaction] = useState([])
+    const [booksData, setBooksData] = useState([])
     const { mutate: getMembers } = useMutation({
         mutationFn: async () => {
             const response = await axios.get('http://localhost:5000/member')
@@ -18,13 +21,39 @@ export default function Home() {
         onSuccess: (res) => {
             setDataMember(res.data.data)
         },
-        onError: (err)=> {
+        onError: (err) => {
             console.log(err)
         }
     })
 
+    const { mutate: getLending } = useMutation({
+        mutationFn: async () => {
+            const res = await axios.get('http://localhost:5000/transaction')
+            return res
+        },
+        onSuccess: (res) => {
+            console.log(res)
+            setMemberTransaction(res.data.data)
+        },
+        onError: (err) => {
+            console.log(err)
+        }
+    })
+
+    const { mutate: getBookList } = useMutation({
+        mutationFn: async () => {
+            const data = await axios.get('http://localhost:5000/books')
+            return data
+        },
+        onSuccess: (res) => {
+            setBooksData(res.data.data)
+        }
+    })
+
     useEffect(() => {
+        getBookList()
         getMembers()
+        getLending()
     }, [])
 
     return (
@@ -33,24 +62,24 @@ export default function Home() {
                 <section className="flex flex-col w-full">
                     <div className="font-bold text-xl">HOME</div>
                     <div className="flex gap-10  w-full h-28 mt-8">
-                        <div className="border-4 border-blue-400 flex-1 gap-6    rounded-lg flex items-center justify-center"><BsFillPeopleFill size={80} color="#60a5fa" />
+                        <Link href={'/admin/member'} className="border-4 border-blue-400 flex-1 gap-6 rounded-lg flex items-center justify-center"><BsFillPeopleFill size={80} color="#60a5fa" />
                             <div>
                                 <div className="text-2xl text-blue-400 font-bold">Members</div>
                                 <div className="text-xl text-blue-400">{dataMember.length}</div>
                             </div>
-                        </div>
-                        <div className="border-4 border-blue-400 flex-1 gap-6 rounded-lg flex items-center justify-center"><HiOutlineNewspaper size={75} color="#60a5fa" />
+                        </Link>
+                        <Link href={'/admin/lending'} className="border-4 border-blue-400 flex-1 gap-6 rounded-lg flex items-center justify-center"><HiOutlineNewspaper size={75} color="#60a5fa" />
                             <div>
                                 <div className="text-2xl text-blue-400 font-bold">Lendings</div>
-                                <div className="text-xl text-blue-400">123123</div>
+                                <div className="text-xl text-blue-400">{memberTransaction.length}</div>
                             </div>
-                        </div>
-                        <div className="border-4 border-blue-400 gap-6 flex-1 rounded-lg flex items-center justify-center"><FaBook size={70} color="#60a5fa" />
+                        </Link>
+                        <Link href={'/admin/books'} className="border-4 border-blue-400 gap-6 flex-1 rounded-lg flex items-center justify-center"><FaBook size={70} color="#60a5fa" />
                             <div>
                                 <div className="text-2xl text-blue-400 font-bold">Books</div>
-                                <div className="text-xl text-blue-400">123123</div>
+                                <div className="text-xl text-blue-400">{booksData.length}</div>
                             </div>
-                        </div>
+                        </Link>
                     </div>
                 </section>
             </main>
